@@ -1,26 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useDispatch, useSelector } from "react-redux";
+import slice from "./redux/list/listSlice";
+import List from "./List";
+import {useForm} from "react-hook-form"
 
-function App() {
+const App = () => {
+  const lists = useSelector(state => state.list);
+  const {register, handleSubmit}=useForm()
+
+
+  const dispatch = useDispatch();
+
+  const addList = (date) => {
+      dispatch(slice.actions.addList({ id: lists.length > 0 ? lists.reduce((a, b) => a.id > b.id ? a : b).id + 1 : 1, title: date.newListName }));
+  };
+
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <p>Redux TODO sample</p>
+      {lists.map((list) =>
+        <List key={list.id} item={list} />
+      )}
+      <form onSubmit={handleSubmit(addList)}>
+      <input ref={register({required:true})} type="text" name="newListName" />
+      </form>
     </div>
   );
-}
+};
 
 export default App;
